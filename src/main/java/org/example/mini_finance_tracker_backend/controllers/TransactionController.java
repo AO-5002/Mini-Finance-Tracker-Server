@@ -59,9 +59,6 @@ public class TransactionController {
         return ResponseEntity.ok(listedItems);
     }
 
-    @DeleteMapping
-    public ResponseEntity<TransactionDto> deleteTransaction(@RequestBody TransactionDto transactionDto, Authentication auth) {}
-
 
 
 
