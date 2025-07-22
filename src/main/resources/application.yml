@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: mini_finance_tracker_backend
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/minifinancetracker
+    username: postgres
+    password: Subbass808!
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  flyway:
+    enabled: false  # Optional: Disable Flyway if you don't have migrations set up
+
+  # Correct configuration for Auth0
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://dev-zgvydazlxfhpxt06.us.auth0.com/
