@@ -1,6 +1,8 @@
 package org.example.mini_finance_tracker_backend.controllers;
 
+import jakarta.validation.Valid;
 import org.example.mini_finance_tracker_backend.dtos.TransactionDto;
+import org.example.mini_finance_tracker_backend.entities.TransactionEntity;
 import org.example.mini_finance_tracker_backend.mappings.TransactionMapper;
 import org.example.mini_finance_tracker_backend.repositories.TransactionRepository;
 import org.example.mini_finance_tracker_backend.repositories.UserRepository;
@@ -11,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,7 +37,7 @@ public class TransactionController {
     private TransactionRepository transactionRepository; // Add this
 
     @PostMapping
-    public ResponseEntity<TransactionDto> saveTransaction(@RequestBody TransactionDto transactionDto, Authentication auth) {
+    public ResponseEntity<TransactionDto> saveTransaction(@Valid @RequestBody TransactionDto transactionDto, Authentication auth) {
 
         // Extract the auth0 id from the Auth Token
         var auth0_id = auth.getName();
@@ -51,11 +54,28 @@ public class TransactionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TransactionDto>> getTransactions(Authentication auth) {
+    public ResponseEntity<List<TransactionDto>> getTransactions(
+            Authentication auth,
+            @RequestParam(required = false, defaultValue = "date") String sortBy,
+            @RequestParam(required = false, defaultValue = "asc") String order
+    ) {
         var auth0_id = auth.getName();
         var user =  userRepository.findByAuth0Id(auth0_id).orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<TransactionDto> listedItems = user.getTransactions().stream().map(transaction -> transactionMapper.transactionToTransactionDto(transaction)).toList();
+        Comparator<TransactionEntity> comparator = switch (sortBy) {
+            case "amount" -> Comparator.comparing(TransactionEntity::getAmount);
+            case "date" -> Comparator.comparing(TransactionEntity::getCreatedAt);
+            default -> Comparator.comparing(TransactionEntity::getCreatedAt); // fallback
+        };
+
+        if (order.equalsIgnoreCase("desc")) {
+            comparator = comparator.reversed();
+        }
+
+        List<TransactionDto> listedItems = user.getTransactions().stream()
+                .sorted(comparator)
+                .map(transactionMapper::transactionToTransactionDto)
+                .toList();
         return ResponseEntity.ok(listedItems);
     }
 

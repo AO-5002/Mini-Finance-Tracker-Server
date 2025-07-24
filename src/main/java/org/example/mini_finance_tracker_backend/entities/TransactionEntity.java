@@ -27,7 +27,7 @@ public class TransactionEntity {
     @JoinColumn(name = "fk_id")
     private UserEntity user;
     @Column(
-            name = "transactionName",
+            name = "transaction_name",
             nullable = false
     )
     private String transactionName;
@@ -41,13 +41,13 @@ public class TransactionEntity {
             nullable = false
     )
     String type;
-    @Column(name = "createdAt")
+    @Column(name = "created_at")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @CreationTimestamp
-    LocalDate createdAt;
-    @Column(name = "updatedAt")
+    private LocalDate createdAt;
+    @Column(name = "updated_at")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    private LocalDate updatedAt;
 
 }
