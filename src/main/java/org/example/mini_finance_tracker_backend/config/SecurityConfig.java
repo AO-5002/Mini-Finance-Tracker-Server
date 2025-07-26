@@ -25,6 +25,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/public").permitAll()
                         .requestMatchers("/user/private").authenticated()
                         .requestMatchers("/transaction/private").authenticated()
+                        .requestMatchers("/transaction/private/{id}").authenticated()
                         .requestMatchers("/api/private").authenticated()
                         .requestMatchers("/api/private-scoped").hasAuthority("SCOPE_read:messages")
                 )
